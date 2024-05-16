@@ -25,7 +25,7 @@ class TaskController extends Controller
             'description' => $request->input('description'),
             'is_active' => true,
         ];
-        $tasks[] = $newTask;
+        array_unshift($tasks, $newTask); // Add the new task to the beginning
         $request->session()->put('tasks', $tasks);
 
         return redirect()->route('tasks.index');
