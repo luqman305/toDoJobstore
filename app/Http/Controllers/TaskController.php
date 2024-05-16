@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Task;
 use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
     public function index(Request $request)
     {
-        $tasks = Task::paginate(5);
+        $tasks = $request->session()->get('tasks', []);
 
         return view('home', compact('tasks'));
     }
@@ -20,23 +19,39 @@ class TaskController extends Controller
             'description' => 'required|string|max:255',
         ]);
 
-        Task::create($request->only('description'));
+        $tasks = $request->session()->get('tasks', []);
+        $newTask = [
+            'id' => count($tasks) + 1,
+            'description' => $request->input('description'),
+            'is_active' => true,
+        ];
+        $tasks[] = $newTask;
+        $request->session()->put('tasks', $tasks);
 
         return redirect()->route('tasks.index');
     }
 
-    public function update(Request $request, Task $task)
+    public function update(Request $request, $id)
     {
-        $task->update([
-            'is_active' => ! $task->is_active,
-        ]);
+        $tasks = $request->session()->get('tasks', []);
+        foreach ($tasks as &$task) {
+            if ($task['id'] == $id) {
+                $task['is_active'] = ! $task['is_active'];
+                break;
+            }
+        }
+        $request->session()->put('tasks', $tasks);
 
         return redirect()->route('tasks.index');
     }
 
-    public function destroy(Task $task)
+    public function destroy(Request $request, $id)
     {
-        $task->delete();
+        $tasks = $request->session()->get('tasks', []);
+        $tasks = array_filter($tasks, function ($task) use ($id) {
+            return $task['id'] != $id;
+        });
+        $request->session()->put('tasks', array_values($tasks));
 
         return redirect()->route('tasks.index');
     }

@@ -16,53 +16,31 @@
                         </div>
                     </form>
 
-                    <ul class="list-group">
-                        @foreach ($tasks as $task)
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>
-                                <input type="checkbox" {{ $task->is_active ? 'checked' : '' }} onclick="event.preventDefault(); document.getElementById('update-form-{{ $task->id }}').submit();">
-                                <span class="{{ $task->is_active ? '' : 'text-decoration-line-through' }}">{{ $task->description }}</span>
-                            </div>
-                            <div>
-                                <form action="{{ route('tasks.update', $task) }}" method="POST" style="display: none;" id="update-form-{{ $task->id }}">
-                                    @csrf
-                                    @method('PUT')
-                                </form>
-                                <form action="{{ route('tasks.destroy', $task) }}" method="POST" onsubmit="return confirm('Are you sure?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="btn btn-danger btn-sm" type="submit"><i class="fas fa-trash-alt"></i></button>
-                                </form>
-                            </div>
-                        </li>
-                        @endforeach
-                    </ul>
-                </div>
-                <div class="card-footer">
-                    <nav>
-                        <ul class="pagination">
-                            <li class="page-item {{ $tasks->previousPageUrl() ? '' : 'disabled' }}">
-                                <a class="page-link" href="{{ $tasks->previousPageUrl() }}" tabindex="-1">&lt;</a>
+                    @if (empty($tasks))
+                        <p class="text-center">No tasks available. Add a new task above.</p>
+                    @else
+                        <ul class="list-group">
+                            @foreach ($tasks as $task)
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <form action="{{ route('tasks.update', $task['id']) }}" method="POST" id="update-form-{{ $task['id'] }}">
+                                        @csrf
+                                        @method('PUT')
+                                        <input type="checkbox" {{ $task['is_active'] ? 'checked' : '' }} onclick="event.preventDefault(); document.getElementById('update-form-{{ $task['id'] }}').submit();">
+                                        <span class="{{ $task['is_active'] ? '' : 'text-decoration-line-through' }}">{{ $task['description'] }}</span>
+                                    </form>
+                                </div>
+                                <div>
+                                    <form action="{{ route('tasks.destroy', $task['id']) }}" method="POST" onsubmit="return confirm('Are you sure?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-danger btn-sm" type="submit"><i class="fas fa-trash-alt"></i></button>
+                                    </form>
+                                </div>
                             </li>
-                            @foreach ($tasks->links()->elements as $element)
-                                @if (is_string($element))
-                                    <li class="page-item disabled"><span class="page-link">{{ $element }}</span></li>
-                                @endif
-
-                                @if (is_array($element))
-                                    @foreach ($element as $page => $url)
-                                        <li class="page-item {{ $tasks->currentPage() == $page ? 'active' : '' }}">
-                                            <a class="page-link" href="{{ $url }}">{{ $page }}</a>
-                                        </li>
-                                    @endforeach
-                                @endif
                             @endforeach
-
-                            <li class="page-item {{ $tasks->nextPageUrl() ? '' : 'disabled' }}">
-                                <a class="page-link" href="{{ $tasks->nextPageUrl() }}">&gt;</a>
-                            </li>
                         </ul>
-                    </nav>
+                    @endif
                 </div>
             </div>
         </div>
