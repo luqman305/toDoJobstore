@@ -45,12 +45,4 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-
-    /**
-     * Get all of the tasks for the User
-     */
-    public function tasks(): HasMany
-    {
-        return $this->hasMany(Task::class);
-    }
 }
