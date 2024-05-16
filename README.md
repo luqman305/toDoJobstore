@@ -15,7 +15,6 @@ cd todolist-laravel
 
 # Set Up Environment Configuration
 Copy the .env.example file to .env
-cp .env.example .env
 
 # env
 APP_NAME=ToDoList
