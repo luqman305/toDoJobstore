@@ -9,7 +9,7 @@ Setup Instructions
 Clone the Repository to Local Machine
 
 # Clone the Repository to Local Machine
-git clone https://github.com/your-repo/todolist-laravel.git
+git clone https://github.com/luqman305/toDoJobstore.git
 cd todolist-laravel
 
 
@@ -32,6 +32,9 @@ DB_PASSWORD=yourpassword
 
 # Install PHP Dependencies
 composer install
+
+# Generate Key
+php artisan key:generate
 
 # Install Frontend Dependencies
 npm install
